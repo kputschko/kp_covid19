@@ -1,0 +1,40 @@
+---
+title: "Simulating the Spread of Infection"
+author: "Kevin Putschko"
+date: "4/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+source("fx_generate_data.R")
+source("fx_plot_spread.R")
+```
+
+## Title
+
+Cases: 100; Steps: 60 
+Spread Distance: 0.20
+75% Asymptomatic Carrier
+10% Case Fatality Rate
+
+- include shiny sliders for values
+- create animated chart to track number of cases
+- maybe make people die after 10-15 steps of infection
+- how to simulate R infection rate?
+- how to include simulated social distancing?
+
+scenario: in an office, go into work sick vs stay home
+
+## Plot
+
+```{r plot, echo=FALSE, message=FALSE}
+data <- 
+  fx_generate_data(cases = 100, steps = 60, 
+                   .distance = 0.20,
+                   .p_carrier = 0.75,
+                   .p_death = 0.10,
+                   .duration = 12)
+
+data %>% fx_plot_infection_spread()
+```
+

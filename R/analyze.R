@@ -2,22 +2,34 @@
 # Exploring COVID19 -------------------------------------------------------
 
 pacman::p_load(tidyverse, lubridate)
+pacman::p_load_gh("RamiKrispin/coronavirus")
+
 
 # Load Data ---------------------------------------------------------------
 
-data_gh <-
-  list(confirmed = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv",
-       deaths    = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv",
-       recovered = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv") %>%
-  modify(read_csv, col_types = cols())
+coronavirus::update_datasets(silence = TRUE)
 
-data_long <-
-  data_gh %>%
-  modify(pivot_longer, cols = `1/22/20`:last_col(), names_to = "date", values_to = "count") %>%
-  bind_rows(.id = "status") %>%
-  mutate_at("date", mdy) %>%
-  rename(province_state = `Province/State`,
-         country_region = `Country/Region`)
+data_covid <-
+  coronavirus::coronavirus %>%
+  as_tibble() %>%
+  print()
+
+
+
+# Original Content
+# data_gh <-
+#   list(confirmed = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv",
+#        deaths    = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv",
+#        recovered = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv") %>%
+#   modify(read_csv, col_types = cols())
+#
+# data_long <-
+#   data_gh %>%
+#   modify(pivot_longer, cols = `1/22/20`:last_col(), names_to = "date", values_to = "count") %>%
+#   bind_rows(.id = "status") %>%
+#   mutate_at("date", mdy) %>%
+#   rename(province_state = `Province/State`,
+#          country_region = `Country/Region`)
 
 
 # New Cases ---------------------------------------------------------------
@@ -49,3 +61,7 @@ data_new %>%
   ggplot(aes(x = date, y = cases, color = country_region, size = new_pct)) +
   geom_point()
 
+
+# Animations --------------------------------------------------------------
+
+pacman::p_load(tidyverse, gganimate)
