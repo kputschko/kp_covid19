@@ -1,0 +1,12 @@
+name: simulating_disease_spread2
+title: simulating_disease_spread2
+username:
+account: kputschko
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2135899
+bundleId: 3027456
+url: https://kputschko.shinyapps.io/simulating_disease_spread2/
+when: 1587136779.40883
+asMultiple: FALSE
+asStatic: FALSE

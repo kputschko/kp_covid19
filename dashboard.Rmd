@@ -1,0 +1,119 @@
+---
+title: "Simulating the Spread of Infection using R and Plotly"
+author: "Author: Kevin Putschko"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  echo = FALSE
+)
+
+pacman::p_load(tidyverse, flexdashboard, shiny, rmarkdown, scales, plotly)
+source("R/fx_generate_data.R")
+source("R/fx_plot_spread.R")
+```
+
+Column {.sidebar}
+-----------------------------------------------
+
+```{r parameters}
+
+div(style = "display:inline-block;width:100%;text-align: center;",
+    actionButton(inputId = "act_sim", 
+                 label = "Run Simulation", 
+                 icon = icon("refresh"),
+                 width = "100%")
+)
+
+hr()
+
+sliderInput(inputId = "in_size", label = "Population Size", 
+            min = 40, max = 120, value = 100,  step = 20, post = " People")
+
+sliderInput(inputId = "in_cases", label = "Initial Cases", 
+            min = 1, max = 5, value = 2, step = 1, post = " Cases")
+
+sliderInput(inputId = "in_dist", label = "Spread Proximity", 
+            min = 0, max = 10, value = 2, step = 2, post = " Feet")
+
+sliderInput(inputId = "in_time", label = "Time Period", 
+            min = 40, max = 120, value = 60, step = 20, post = " Days")
+
+sliderInput(inputId = "in_inc", label = "Incubation Period", 
+            min = 2, max = 12, value = 8, step = 2, post = " Days")
+
+sliderInput(inputId = "in_dur", label = "Duration of Infection", 
+            min = 2, max = 12, value = 8, step = 2, post = " Days")
+
+sliderInput(inputId = "in_death", label = "Fatality Rate", 
+            min = 2, max = 20, value = 10, step = 2, post = "%")
+
+sliderInput(inputId = "in_symp", label = "Symptomatic Rate", 
+            min = 40, max = 100, value = 70, step = 10, post = "%")
+
+```
+
+
+Row
+-----------------------------------------------
+
+### Plotly Animation
+
+```{r function}
+function_output <- eventReactive(input$act_sim, {
+  
+  fx_generate_data(.steps = input$in_time,
+                   .cases = input$in_size,
+                   .distance = input$in_dist/10,
+                   .p_symptomatic = input$in_symp/100,
+                   .p_death = input$in_death/100,
+                   .initial_infections = input$in_cases,
+                   .incubation = input$in_inc,
+                   .duration = input$in_dur)
+  
+})
+```
+
+
+```{r plot, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+output$plotly_output <- renderPlotly({
+  
+  if (input$act_sim == 0) {
+    plot_ly(mode = "markers", type = "scatter") %>% 
+      layout(xaxis = list(zeroline = FALSE, showticklabels = FALSE, title = ""),
+             yaxis =  list(zeroline = FALSE, showticklabels = FALSE, title = ""),
+             plot_bgcolor = "black",
+             paper_bgcolor = "white")
+  } else {
+    function_output()$data %>%
+      fx_plot_infection_spread(
+        title = str_glue("Virus Reproduction Ratio (R0): {function_output()$R0 %>% number(accuracy = 0.01)}"))
+  }
+})
+
+plotlyOutput("plotly_output")
+```
+
+
+Row {data-height=25}
+-----------------------------------------------
+
+### Disclaimer
+
+```{r disclaimer}
+HTML("
+<small><ol>
+  <li>I am not an epidemiologist.  All of these simulation values are made up!</li>
+  <li>For more information see the FiveThirtyEight article <a href='https://fivethirtyeight.com/features/coronavirus-case-counts-are-meaningless/'>'Case Counts are Meaningless'</a></li>
+</ol></small>
+")
+
+```
+

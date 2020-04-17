@@ -7,7 +7,7 @@ fx_plot_infection_spread <- function(data,
                                                     E = "#FFC20A",
                                                     A = "#FFC20A",
                                                     S = "#DC3220",
-                                                    R = "#6081E3",
+                                                    R = "#0C7BDC",
                                                     D = "translucent")) {
 
   library(plotly)
@@ -16,7 +16,7 @@ fx_plot_infection_spread <- function(data,
     c(H = "translucent",
       E = "translucent",
       A = "#translucent",
-      S = "#translucent",
+      S = "translucent",
       R = "translucent",
       D = "darkgray")
 
@@ -47,11 +47,11 @@ fx_plot_infection_spread <- function(data,
                                       width = 1))) %>%
     layout(xaxis = plot_axes, yaxis = plot_axes, showlegend = FALSE,
            plot_bgcolor = "black", paper_bgcolor = "translucent",
-           title = list(text = "Simulating the Spread of Infection",
+           title = list(text = title,
                         font = list(family = "Avenir", size = 18),
                         xref = "container",
                         x = 0)) %>%
-    animation_slider(currentvalue = list(prefix = "Time: "))
+    animation_slider(currentvalue = list(prefix = "Days Since First Exposure: "))
 
 }
 
@@ -60,4 +60,4 @@ fx_plot_infection_spread <- function(data,
 
 # source("R/fx_generate_data.R")
 # test_data <- fx_generate_data(.cases = 50, .steps = 50)
-# test_data %>% fx_plot_infection_spread()
+# test_data$data %>% fx_plot_infection_spread(title = str_glue("R0: {test_data$R0 %>% scales::number(accuracy = 0.01)}"))

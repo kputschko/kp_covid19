@@ -197,7 +197,7 @@ fx_generate_data <- function(.cases,
 # .incubation <- 6
 # .duration <- 6
 # .initial_infections <-  5
-#
+
 # test <-
 #   fx_generate_data(.cases = .cases,
 #                    .steps = .steps,
